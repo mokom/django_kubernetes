@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/3.2/howto/deployment/wsgi/
 
 import os
 import pathlib
+import dotenv
 
 from django.core.wsgi import get_wsgi_application
 
