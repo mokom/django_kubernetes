@@ -13,8 +13,8 @@ services:
     ports:
       - "8000:8000"
     command: sh -c "chmod +x /app/migrate.sh && sh /app/migrate.sh && /app/entrypoint.sh"
-    volumes:
-      - staticfiles:/app/staticfiles/
+    # volumes:
+    #   - staticfiles:/app/staticfiles/
   postgres:
     container_name: django_k8s_db
     image: postgres
@@ -22,9 +22,9 @@ services:
     command: -p 5432
     env_file:
       - ./app/.env
-    expose: # external ports
+    expose: # expose ports to services on the same network
       - 5432 
-    ports: # internal ports
+    ports: # internal ports for host machine interact with
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -32,6 +32,6 @@ services:
 
 
 volumes:
-  staticfiles:
-    external: True 
+  # staticfiles:
+  #   external: True 
   postgres_data:
