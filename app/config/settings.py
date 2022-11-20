@@ -85,10 +85,7 @@ DB_IS_AVAILABLE = all([
 
 ])
 
-POSTGRES_READY= str(os.environ.get("POSTGRES_READY")) == "1"
-
-
-if DB_IS_AVAILABLE and POSTGRES_READY:
+if DB_IS_AVAILABLE:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
@@ -139,7 +136,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIR = [BASE_DIR / "static"]
+STATICFILES_DIR = [BASE_DIR / "staticfiles"]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
