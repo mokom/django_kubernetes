@@ -16,8 +16,8 @@ jobs:
     needs: [test_django_job]
     env:
       CLUSTER_NAME: django-k8s-cluster
-      CONTAINER_NAME: django-k8s-app-deployment
-      CONTAINER_DOCKER_IMAGE: registry.digitalocean.com/django-k8s-registry/django-k8s-app
+      KUBERNETES_CONTAINER_NAME: django-k8s-app-deployment
+      KUBERNETES_CONTAINER_IMAGE: registry.digitalocean.com/django-k8s-registry/django-k8s-app
       KUBERNETES_DEPLOYMENT_NAME: django-k8s-app-deployment
     steps:
     - name: Checkout code
@@ -32,13 +32,13 @@ jobs:
       working-directory: ./app
       run: |
         docker build -f Dockerfile \
-          -t registry.digitalocean.com/django-k8s-registry/django-k8s-app:latest \
-          -t registry.digitalocean.com/django-k8s-registry/django-k8s-app:${GITHUB_SHA::7}-${GITHUB_RUN_ID::5} \
+          -t ${{ KUBERNETES_CONTAINER_IMAGE: }}:latest \
+          -t ${{ KUBERNETES_CONTAINER_IMAGE: }}:${GITHUB_SHA::7}-${GITHUB_RUN_ID::5} \
           .
         
     - name: Push image
       run: |
-        docker push registry.digitalocean.com/django-k8s-registry/django-k8s-app --all-tags
+        docker push ${{ KUBERNETES_CONTAINER_IMAGE: }} --all-tags
     - name: Kubernetes cluster kubeconfig file with short-lived creds
       run: |
         doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ env.CLUSTER_NAME }}
@@ -70,7 +70,7 @@ jobs:
         kubectl create secret generic django-k8s-app-prod-env --from-env-file=app/.env.prod
     - name: Update Deployment Image 
       run: |
-        kubectl set image deployment/django-k8s-app-deployment django-k8s-app-deployment=registry.digitalocean.com/django-k8s-registry/django-k8s-app:${GITHUB_SHA::7}-${GITHUB_RUN_ID::5}
+        kubectl set image deployment/${{ env.KUBERNETES_DEPLOYMENT_NAME }} ${{ env.KUBERNETES_CONTAINER_NAME }}=${{env.KUBERNETES_CONTAINER_IMAGE}}:${GITHUB_SHA::7}-${GITHUB_RUN_ID::5}
     - name: Wait for rollout to finish
       run: |
         kubectl rollout status deployment/django-k8s-app-deployment
