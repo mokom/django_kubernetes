@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'blog.apps.BlogConfig',
+    'storages',# django storages 
 ]
 
 MIDDLEWARE = [
@@ -146,7 +147,13 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIR = [BASE_DIR / "staticfiles"]
+# STATICFILES_DIRS = [BASE_DIR / "static"]
+
+STATIC_ROOT = BASE_DIR / "staticfiles-cdn"
+
+STATICFILES_DIRS = [BASE_DIR / "staticfiles"]
+
+from .cdn.conf import * # noqa
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

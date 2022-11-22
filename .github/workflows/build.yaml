@@ -62,6 +62,9 @@ jobs:
         POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}
         POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}
 
+        AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
         EOF
         kubectl delete secret django-k8s-app-prod-env
         kubectl create secret generic django-k8s-app-prod-env --from-env-file=app/.env.prod
@@ -75,3 +78,4 @@ jobs:
       run: |
         export SINGLE_POD_NAME=$(kubectl get pod -l app=django-k8s-app-deployment -o jsonpath="{.items[0].metadata.name}")
         kubectl exec -it $SINGLE_POD_NAME -- bash /app/migrate.sh
+        kubectl exec -it $SINGLE_POD_NAME -- bash /app/collectstatic.sh

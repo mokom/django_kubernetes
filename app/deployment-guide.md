@@ -46,4 +46,5 @@ Then run `migrate.sh`
 
 ```
 kubectl exec -it $SINGLE_POD_NAME -- bash /app/migrate.sh
+kubectl exec -it $SINGLE_POD_NAME -- bash /app/collectstatic.sh # Once django storage has been configured
 ```
