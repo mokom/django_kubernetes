@@ -17,5 +17,22 @@ jobs:
     env:
       DJANGO_SECRET_KEY: test-key-not-good-make-one-better
     steps:
-    - uses: actions/checkout@v3
-    
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: Install Digital Ocean ctl
+      uses: digitalocean/action-doctl@v2
+      with:
+        token: ${{ secrets.DIGITAL_OCEAN_API_TOKEN_KEY }}
+    - name: Login to Digital Ocean Container Registry with short lived creds
+      run: doctl registry login --expiry-seconds 1200
+    - name: Build container image
+      working-directory: ./app
+      run: |
+        docker build -f Dockerfile \ 
+          -t registry.digitalocean.com/django-k8s-registry/django-k8s-app:latest \
+          -t registry.digitalocean.com/django-k8s-registry/django-k8s-app:${GITHUB_SHA::7} \
+          .
+    - name: Push image
+      run: |
+        docker push registry.digitalocean.com/django-k8s-registry/django-k8s-app --all-tags
+        
