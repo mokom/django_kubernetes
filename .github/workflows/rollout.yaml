@@ -1,0 +1,27 @@
+name: Rollout Django Deployment
+
+on:
+  workflow_call:
+  workflow_dispatch:
+    
+jobs:
+  rollout_job:
+    runs-on: ubuntu-latest
+    env:
+      CLUSTER_NAME: django-k8s-cluster
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: Install Digital Ocean ctl
+      uses: digitalocean/action-doctl@v2
+      with:
+        token: ${{ secrets.DIGITAL_OCEAN_API_TOKEN_KEY }}
+    
+    - name: Kubernetes cluster kubeconfig file with short-lived creds
+      run: |
+        doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ env.CLUSTER_NAME }}
+    - name: RUn Rollout on Deployment
+      run: |
+        kubectl rollout status deployment/django-k8s-app-deployment
+
+      
