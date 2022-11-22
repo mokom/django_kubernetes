@@ -9,10 +9,11 @@ on:
     branches: [master]
     
 jobs:
-  test_django:
+  test_django_job:
     uses: mokom/django_kubernetes/.github/workflows/test-django.yaml@master
-  docker_build:
+  docker_build_job:
     runs-on: ubuntu-latest
+    needs: [test_django_job]
     env:
       DJANGO_SECRET_KEY: test-key-not-good-make-one-better
     steps:
