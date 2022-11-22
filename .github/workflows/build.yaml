@@ -32,13 +32,13 @@ jobs:
       working-directory: ./app
       run: |
         docker build -f Dockerfile \
-          -t ${{ KUBERNETES_CONTAINER_IMAGE: }}:latest \
-          -t ${{ KUBERNETES_CONTAINER_IMAGE: }}:${GITHUB_SHA::7}-${GITHUB_RUN_ID::5} \
+          -t ${{ env.KUBERNETES_CONTAINER_IMAGE }}:latest \
+          -t ${{ env.KUBERNETES_CONTAINER_IMAGE }}:${GITHUB_SHA::7}-${GITHUB_RUN_ID::5} \
           .
         
     - name: Push image
       run: |
-        docker push ${{ KUBERNETES_CONTAINER_IMAGE: }} --all-tags
+        docker push ${{ env.KUBERNETES_CONTAINER_IMAGE }} --all-tags
     - name: Kubernetes cluster kubeconfig file with short-lived creds
       run: |
         doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ env.CLUSTER_NAME }}
@@ -70,7 +70,7 @@ jobs:
         kubectl create secret generic django-k8s-app-prod-env --from-env-file=app/.env.prod
     - name: Update Deployment Image 
       run: |
-        kubectl set image deployment/${{ env.KUBERNETES_DEPLOYMENT_NAME }} ${{ env.KUBERNETES_CONTAINER_NAME }}=${{env.KUBERNETES_CONTAINER_IMAGE}}:${GITHUB_SHA::7}-${GITHUB_RUN_ID::5}
+        kubectl set image deployment/${{ env.KUBERNETES_DEPLOYMENT_NAME }} ${{ env.KUBERNETES_CONTAINER_NAME }}=${{ env.KUBERNETES_CONTAINER_IMAGE }}:${GITHUB_SHA::7}-${GITHUB_RUN_ID::5}
     - name: Wait for rollout to finish
       run: |
         kubectl rollout status deployment/django-k8s-app-deployment
