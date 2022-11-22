@@ -1,0 +1,20 @@
+name: Build Docker Container & Push to Digital Ocean Registry
+
+on:
+  workflow_call:
+  workflow_dispatch:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+    
+jobs:
+  test_django:
+    uses: mokom/django_kubernetes/.github/workflows/test-django.yaml@master
+  docker_build:
+    runs-on: ubuntu-latest
+    env:
+      DJANGO_SECRET_KEY: test-key-not-good-make-one-better
+    steps:
+    - uses: actions/checkout@v3
+    
