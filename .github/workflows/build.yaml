@@ -67,7 +67,7 @@ jobs:
         kubectl create secret generic django-k8s-app-prod-env --from-env-file=app/.env.prod
     - name: Update Deployment Image 
       run: |
-        kubectl set image deployment/django-k8s-app-deployment ${{ env.CONTAINER_NAME }}=${{ env.CONTAINER_DOCKER_NAME }}:${GITHUB_SHA::7}
+        kubectl set image deployment/django-k8s-app-deployment django-k8s-app=registry.digitalocean.com/django-k8s-registry/django-k8s-app:${GITHUB_SHA::7}
     - name: Wait for rollout to finish
       run: |
         kubectl rollout status deployment/django-k8s-app-deployment
