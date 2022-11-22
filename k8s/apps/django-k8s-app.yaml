@@ -15,6 +15,7 @@ spec:
       containers:
       - name: django-k8s-app-deployment
         image: registry.digitalocean.com/django-k8s-registry/django-k8s-app:latest
+        imagePullPolicy: Always # pull image when new pod is created
         envFrom:
           - secretRef:
               name: django-k8s-app-prod-env
