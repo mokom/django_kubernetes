@@ -41,3 +41,9 @@ OR
 ```
 export SINGLE_POD_NAME=$(kubectl get pod -l app=django-k8s-app-deployment -o NAME | tail -n 1)
 ```
+
+Then run `migrate.sh`
+
+```
+kubectl exec -it $SINGLE_POD_NAME -- bash /app/migrate.sh
+```
