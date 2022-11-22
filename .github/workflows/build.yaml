@@ -28,11 +28,12 @@ jobs:
     - name: Build container image
       working-directory: ./app
       run: |
-        docker build -f Dockerfile \ 
+        docker build -f Dockerfile \
           -t registry.digitalocean.com/django-k8s-registry/django-k8s-app:latest \
           -t registry.digitalocean.com/django-k8s-registry/django-k8s-app:${GITHUB_SHA::7} \
           .
+        
     - name: Push image
       run: |
         docker push registry.digitalocean.com/django-k8s-registry/django-k8s-app --all-tags
-        
+
