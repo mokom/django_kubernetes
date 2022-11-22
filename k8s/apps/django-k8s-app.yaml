@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-k8s-app-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: django-k8s-app-deployment
+  template:
+    metadata:
+      labels:
+        app: django-k8s-app-deployment
+    spec:
+      containers:
+      - name: django-k8s-app-deployment
+        image: registry.digitalocean.com/django-k8s-registry/django-k8s-app:latest
+        envFrom:
+          - secretRef:
+              name: django-k8s-app-prod-env
+        env:
+          - name: PORT
+            value: "8001"
+        ports:
+        - containerPort: 8001
+      imagePullSecrets: # when private repo was connected, a secret was automatically created and updated our service account. the service account is how we're able to access in this case the private image 
+        - name: django-k8s-registry
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: django-k8s-app-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: django-k8s-app-deployment
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: 8001
